@@ -1,7 +1,9 @@
 <?php
 // Read data from JSON file
+include "Functions.php";
 $json_data = file_get_contents('data.json');
 $data = json_decode($json_data, true);
+$teamMembers = readCSV('team-member.csv'); 
 ?>
 
 <!DOCTYPE html>
