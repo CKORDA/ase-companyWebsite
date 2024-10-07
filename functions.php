@@ -1,16 +1,13 @@
 <?php
 function readCSV($filename) {
-    $csvData = [];
-    if (($handle = fopen($filename, "r")) !== FALSE) {
-        // Read the header row
-        $header = fgetcsv($handle);
-        
-        // Read each line of the CSV and create an associative array
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            $csvData[] = array_combine($header, $data); // Combine header with data
+    $data = [];
+    if (($handle = fopen($filename, 'r')) !== false) {
+        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+            $data[] = $row;
         }
-        fclose($handle); // Close the file after reading
+        fclose($handle);
     }
-    return $csvData;
+    return $data;
 }
+
 ?>
