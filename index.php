@@ -85,35 +85,50 @@ $data = json_decode($json_data, true);
     </section>
     <!-- Awards Section End -->
 
-    <!-- Team Members Section Start -->
-    <section class="section" id="team">
-        <div class="container">
-            <h2 class="fw-bold mb-4">Our Team</h2>
-            <div class="row">
-                <?php
-                // Check if the team array exists
-                if (isset($data['team']['members'])) {
-                    foreach ($data['team']['members'] as $index => $member) {
-                        echo '<div class="col-lg-3 col-sm-6">';
-                        echo '    <div class="team-box mt-4 position-relative overflow-hidden rounded text-center shadow">';
-                        echo '        <div class="position-relative overflow-hidden">';
-                        echo '        </div>';
-                        echo '        <div class="p-4">';
-                        echo '            <h5 class="font-size-19 mb-1">' . htmlspecialchars($member['name']) . '</h5>';
-                        echo '            <h6 class="font-size-16 mb-1">' . htmlspecialchars($member['position']) . '</h6>';
-                        echo '            <p class="text-muted text-uppercase font-size-14 mb-0">' . htmlspecialchars($member['bio']) . '</p>';
-                        echo '        </div>';
-                        echo '    </div>';
-                        echo '</div>';
-                    }
-                } else {
-                    echo '<p>No team members found.</p>';
-                }
-                ?>
+         <!-- Team start -->
+<section class="section bg-light" id="team">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-7 text-center">
+                <h2 class="fw-bold">Our Team Members</h2>
             </div>
+            <!-- end col -->
         </div>
-    </section>
-    <!-- Team Members Section End -->
+        <!-- end row -->
+        <div class="row">
+            <?php foreach ($teamMembers as $key => $member) : ?>
+                <?php if ($key === 0) continue; // Skip the header row ?>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="team-box mt-4 position-relative overflow-hidden rounded text-center shadow">
+                        <div class="position-relative overflow-hidden">
+                            <img src="images/team/<?php echo $key + 1; ?>.jpg" alt="" class="img-fluid d-block mx-auto" /> <!-- Adjust image path if needed -->
+                            <ul class="list-inline p-3 mb-0 team-social-item">
+                                <li class="list-inline-item mx-3">
+                                    <a href="javascript: void(0);" class="team-social-icon h-primary"><i class="icon-sm" data-feather="facebook"></i></a>
+                                </li>
+                                <li class="list-inline-item mx-3">
+                                    <a href="javascript: void(0);" class="team-social-icon h-info"><i class="icon-sm" data-feather="twitter"></i></a>
+                                </li>
+                                <li class="list-inline-item mx-3">
+                                    <a href="javascript: void(0);" class="team-social-icon h-danger"><i class="icon-sm" data-feather="instagram"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="p-4">
+                            <h5 class="font-size-19 mb-1"><?php echo htmlspecialchars($member[0]); ?></h5>
+                            <p class="text-muted text-uppercase font-size-14 mb-0"><?php echo htmlspecialchars($member[1]); ?>: <?php echo htmlspecialchars($member[3]); ?></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- end col -->
+            <?php endforeach; ?>
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+</section>
+<!-- Team end -->
+
 
 
     <!-- Contact Us Section Start -->
