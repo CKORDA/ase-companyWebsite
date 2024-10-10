@@ -1,12 +1,12 @@
 <?php
-function readCSV($filename) {
+function readCSV($filePath) {
+    $csvData = array_map('str_getcsv', file($filePath));
+    $headers = array_shift($csvData);
     $data = [];
-    if (($handle = fopen($filename, 'r')) !== false) {
-        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
-            $data[] = $row;
-        }
-        fclose($handle);
+    foreach ($csvData as $row) {
+        $data[] = array_combine($headers, $row);
     }
     return $data;
 }
+
 ?>
