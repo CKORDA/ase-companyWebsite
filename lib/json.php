@@ -1,6 +1,7 @@
 <?php
-header('Content-Type: application/json');
+function readJSON($filePath) {
+    $jsonData = file_get_contents($filePath);
+    return json_decode($jsonData, true);
+}
 
-$jsonData = file_get_contents('data.json');
-echo $jsonData;
 ?>
