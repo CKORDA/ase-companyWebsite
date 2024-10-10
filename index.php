@@ -13,10 +13,10 @@ $team = readCSV('data/team-member.csv');
 
 
 // Debugging
-var_dump($overview);
-var_dump($mission);
-var_dump($products);
-var_dump($team);
+//var_dump($overview);
+//var_dump($mission);
+//var_dump($products);
+//var_dump($team);
 
 ?>
 <!DOCTYPE html>
