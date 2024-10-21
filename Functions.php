@@ -5,3 +5,4 @@ function loadpage ($index){
     $content=file_get_contents($path);
     echo $content;
 }
+
