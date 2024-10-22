@@ -1,5 +1,4 @@
 <?php
-
 include 'lib/readPlainText.php';
 include 'lib/readCSV.php';
 include 'lib/json.php';
@@ -8,20 +7,38 @@ include 'lib/json.php';
 $overview = readPlainText('data/overview.txt');
 $mission = readPlainText('data/mission_statement.txt');
 $products = readJSON('data/data.json');
-//$awards = readJSON('data/data.json');
 $team = readCSV('data/team-member.csv');
 
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Define the path to the contacts.json file
+    $contactsFile = 'data/contacts.json';
 
-// Debugging
-//var_dump($overview);
-//var_dump($mission);
-//var_dump($products);
-//var_dump($team);
+    // Read the existing contacts from the JSON file
+    $contactsData = file_exists($contactsFile) ? json_decode(file_get_contents($contactsFile), true) : [];
 
+    // Get the form data
+    $newContact = [
+        'name' => $_POST['name'],
+        'email' => $_POST['email'],
+        'message' => $_POST['message'],
+        'timestamp' => date('Y-m-d H:i:s') // Optional timestamp
+    ];
+
+    // Append the new contact to the existing data
+    $contactsData[] = $newContact;
+
+    // Write the updated contacts data back to the JSON file
+    file_put_contents($contactsFile, json_encode($contactsData, JSON_PRETTY_PRINT));
+
+    // Optionally, you can redirect to the same page to avoid resubmission on refresh
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +48,6 @@ $team = readCSV('data/team-member.csv');
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
 <body>
     <!-- Header Start -->
     <header class="header">
@@ -86,8 +102,8 @@ $team = readCSV('data/team-member.csv');
             <h2 class="fw-bold mb-4">Awards</h2>
             <ul>
                 <?php foreach ($products['awards'] as $award): ?>
-					<li><?php echo $award; ?></li>
-				<?php endforeach; ?>
+                    <li><?php echo $award; ?></li>
+                <?php endforeach; ?>
             </ul>
         </div>
     </section>
@@ -116,7 +132,24 @@ $team = readCSV('data/team-member.csv');
 
     <!-- Contact Us Section -->
     <section class="section" id="contact">
-        <!-- Contact Form HTML remains the same -->
+        <div class="container">
+            <h2 class="fw-bold mb-4">Contact Us</h2>
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
     </section>
 
     <script src="js/bootstrap.bundle.min.js"></script>
@@ -125,5 +158,4 @@ $team = readCSV('data/team-member.csv');
         feather.replace();
     </script>
 </body>
-
 </html>
