@@ -1,23 +1,10 @@
 <?php
+require_once '../CSVHelper.php'; // Include the CSVHelper class
 
-
-// Function to retrieve all team members
+// Function to retrieve all team members using CSVHelper
 function getTeamMembers() {
-    // Logic to read from team.csv or a database
-    $team = [];
-    if (($handle = fopen("team.csv", "r")) !== FALSE) {
-        fgetcsv($handle); // Skip the header
-        while (($data = fgetcsv($handle)) !== FALSE) {
-            $team[] = [
-                'Name' => $data[0],
-                'Role' => $data[1],
-                'Expertise' => $data[2],
-                'Description' => $data[3],
-            ];
-        }
-        fclose($handle);
-    }
-    return $team;
+    $filePath = 'team.csv';
+    return CSVHelper::readCSV($filePath);
 }
 
 // Display all team members
@@ -39,10 +26,11 @@ $teamMembers = getTeamMembers();
             <th>Actions</th>
         </tr>
         <?php foreach ($teamMembers as $key => $member): ?>
+            <?php if ($key === 0) continue; // Skip the header if present ?>
             <tr>
-                <td><?php echo htmlspecialchars($member['Name']); ?></td>
-                <td><?php echo htmlspecialchars($member['Role']); ?></td>
-                <td><?php echo htmlspecialchars($member['Expertise']); ?></td>
+                <td><?php echo htmlspecialchars($member[0]); ?></td>
+                <td><?php echo htmlspecialchars($member[1]); ?></td>
+                <td><?php echo htmlspecialchars($member[2]); ?></td>
                 <td>
                     <a href="detail.php?id=<?php echo $key; ?>">View</a>
                     <a href="edit.php?id=<?php echo $key; ?>">Edit</a>
