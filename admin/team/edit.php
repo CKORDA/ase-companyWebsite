@@ -1,48 +1,30 @@
 <?php
+require_once '../CSVHelper.php'; // Include the CSVHelper class
 
-
+// Function to get a specific team member by their ID
 function getTeamMember($id) {
-    $team = [];
-    if (($handle = fopen("team.csv", "r")) !== FALSE) {
-        fgetcsv($handle); // Skip the header
-        while (($data = fgetcsv($handle)) !== FALSE) {
-            $team[] = [
-                'Name' => $data[0],
-                'Role' => $data[1],
-                'Expertise' => $data[2],
-                'Description' => $data[3],
-            ];
-        }
-        fclose($handle);
-    }
-    return isset($team[$id]) ? $team[$id] : null;
+    $team = CSVHelper::readCSV('team.csv');
+    return isset($team[$id + 1]) ? $team[$id + 1] : null; // +1 to account for the header row
 }
 
+// Get the member ID from the query string
 $memberId = $_GET['id'];
 $member = getTeamMember($memberId);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Get the updated values from the form
     $name = $_POST['name'];
     $role = $_POST['role'];
     $expertise = $_POST['expertise'];
     $description = $_POST['description'];
 
-    // Logic to update team.csv (simple method)
-    $rows = [];
-    if (($handle = fopen("team.csv", "r")) !== FALSE) {
-        while (($data = fgetcsv($handle)) !== FALSE) {
-            $rows[] = $data;
-        }
-        fclose($handle);
-    }
+    // Prepare the updated member data
+    $updatedMember = [$name, $role, $expertise, $description];
 
-    $rows[$memberId + 1] = [$name, $role, $expertise, $description]; // +1 to account for header row
-    $file = fopen("team.csv", "w");
-    foreach ($rows as $row) {
-        fputcsv($file, $row);
-    }
-    fclose($file);
+    // Update the CSV file using CSVHelper
+    CSVHelper::updateCSV('team.csv', $memberId + 1, $updatedMember); // +1 for the header row
 
+    // Redirect back to the index page
     header("Location: index.php");
     exit();
 }
@@ -55,17 +37,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h1>Edit Team Member</h1>
-    <form method="POST">
-        <label>Name:</label><br>
-        <input type="text" name="name" value="<?php echo htmlspecialchars($member['Name']); ?>" required><br>
-        <label>Role:</label><br>
-        <input type="text" name="role" value="<?php echo htmlspecialchars($member['Role']); ?>" required><br>
-        <label>Expertise:</label><br>
-        <input type="text" name="expertise" value="<?php echo htmlspecialchars($member['Expertise']); ?>" required><br>
-        <label>Description:</label><br>
-        <textarea name="description" required><?php echo htmlspecialchars($member['Description']); ?></textarea><br>
-        <input type="submit" value="Save Changes">
-    </form>
+    <?php if ($member): ?>
+        <form method="POST">
+            <label>Name:</label><br>
+            <input type="text" name="name" value="<?php echo htmlspecialchars($member[0]); ?>" required><br>
+            <label>Role:</label><br>
+            <input type="text" name="role" value="<?php echo htmlspecialchars($member[1]); ?>" required><br>
+            <label>Expertise:</label><br>
+            <input type="text" name="expertise" value="<?php echo htmlspecialchars($member[2]); ?>" required><br>
+            <label>Description:</label><br>
+            <textarea name="description" required><?php echo htmlspecialchars($member[3]); ?></textarea><br>
+            <input type="submit" value="Save Changes">
+        </form>
+    <?php else: ?>
+        <p>Team member not found.</p>
+    <?php endif; ?>
     <a href="index.php">Back to List</a>
 </body>
 </html>
