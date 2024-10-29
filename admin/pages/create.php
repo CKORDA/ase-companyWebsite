@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Create new page
-    $result = $pageManager->createPage($name, $description, $applications);
+    $result = createPage($name, $description, $applications);
     
     if ($result) {
         header("Location: index.php");

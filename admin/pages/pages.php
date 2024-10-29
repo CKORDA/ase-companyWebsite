@@ -1,10 +1,13 @@
 <?php
-
-class PageManager {
-    private $filePath;
-
-    public function __construct() {
-        $this->filePath = __DIR__ . '/../../data/data.json';
+if (!function_exists('loadJSON')) {
+    function loadJSON() {
+        $filePath = __DIR__ . '/../../data/data.json';
+        if (file_exists($filePath)) {
+            return json_decode(file_get_contents($filePath), true);
+        } else {
+            error_log("File not found: " . $filePath);
+            return null; // Handle file not found
+        }
     }
 
     private function loadJSON() {
@@ -25,26 +28,22 @@ class PageManager {
         return $data['productsAndServices'] ?? [];
     }
 
-    public function retrievePage($index) {
-        $data = $this->loadJSON();
-        return $data['productsAndServices'][$index] ?? null;
-    }
-
+if (!function_exists('createPage')) {
     function createPage($name, $description, $applications) {
-        // Loads the existing data.
+        // Load the existing data
         $data = json_decode(file_get_contents(__DIR__ . '/../../data/data.json'), true);
         
-        // Create the new page entry.
+        // Create the new page entry
         $newPage = [
             'name' => $name,
             'description' => $description,
             'applications' => $applications
         ];
         
-        // Adds to the productsAndServices array.
+        // Add to the productsAndServices array
         $data['productsAndServices'][] = $newPage;
         
-        // Saves the updated data back to JSON file.
+        // Save the updated data back to JSON file
         if (file_put_contents(__DIR__ . '/../../data/data.json', json_encode($data, JSON_PRETTY_PRINT))) {
             return true;
         } else {
@@ -52,26 +51,33 @@ class PageManager {
         }
     }
     
+}
 
+function updatePage($index, $name, $description, $applications) {
+    $filePath = __DIR__ . '/../../data/data.json';
+    $data = json_decode(file_get_contents($filePath), true);
 
-    public function updatePage($index, $name, $description, $applications) {
-        $data = $this->loadJSON();
+    if (isset($data['productsAndServices'][$index])) {
+        $data['productsAndServices'][$index]['name'] = $name;
+        $data['productsAndServices'][$index]['description'] = $description;
+        $data['productsAndServices'][$index]['applications'] = $applications;
 
-        if (isset($data['productsAndServices'][$index])) {
-            $data['productsAndServices'][$index] = [
-                'name' => $name,
-                'description' => $description,
-                'applications' => $applications
-            ];
-            return $this->saveJSON($data);
+        if (file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT))) {
+            return true; 
         } else {
-            error_log("Invalid index or data structure.");
-            return false;
+            error_log("Failed to write to JSON file: " . $filePath);
+            return false; 
+
         }
+    } else {
+        error_log("Invalid index or data structure.");
+        return false; 
     }
 
-    public function deletePage($index) {
-        $data = $this->loadJSON();
+
+if (!function_exists('deletePage')) {
+    function deletePage($index) {
+        $data = loadJSON();
         if (isset($data['productsAndServices'][$index])) {
             array_splice($data['productsAndServices'], $index, 1);
             $this->saveJSON($data);
