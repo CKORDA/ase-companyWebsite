@@ -1,21 +1,9 @@
 <?php
-function readAwardsFromCSV($filename) {
-    $awards = [];
-    if (($handle = fopen($filename, 'r')) !== false) {
-        $header = fgetcsv($handle);
-        while (($data = fgetcsv($handle)) !== false) {
-            $awards[] = [
-                'id' => $data[0],
-                'year' => $data[1], // Assuming 'year' is the second column
-                'title' => $data[2] // Assuming 'title' is the third column
-            ];
-        }
-        fclose($handle);
-    }
-    return $awards;
-}
+require_once 'AwardManager.php'; // Include the class file
 
-$awards = readAwardsFromCSV('data/awards.csv');
+$filename = 'data/awards.csv';
+$awardManager = new AwardManager($filename);
+$awards = $awardManager->readAwards(); // Use the readAwards method from the AwardManager class
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -87,7 +75,7 @@ $awards = readAwardsFromCSV('data/awards.csv');
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Year</th> <!-- Year comes before Title -->
+                    <th>Year</th>
                     <th>Title</th>
                     <th>Actions</th>
                 </tr>
@@ -95,14 +83,14 @@ $awards = readAwardsFromCSV('data/awards.csv');
             <tbody>
                 <?php foreach ($awards as $award): ?>
                 <tr>
-                    <td><?php echo $award['id']; ?></td>
-                    <td><?php echo $award['year']; ?></td> <!-- Displaying year -->
-                    <td><?php echo $award['title']; ?></td> <!-- Displaying title -->
+                    <td><?php echo htmlspecialchars($award->id); ?></td>
+                    <td><?php echo htmlspecialchars($award->year); ?></td>
+                    <td><?php echo htmlspecialchars($award->title); ?></td>
                     <td>
                         <div style="display: flex; justify-content: center;">
-                            <a href="detail.php?id=<?php echo $award['id']; ?>" class="btn btn-info btn-sm">View</a>
-                            <a href="edit.php?id=<?php echo $award['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                            <a href="delete.php?id=<?php echo $award['id']; ?>" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="detail.php?id=<?php echo $award->id; ?>" class="btn btn-info btn-sm">View</a>
+                            <a href="edit.php?id=<?php echo $award->id; ?>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="delete.php?id=<?php echo $award->id; ?>" class="btn btn-danger btn-sm">Delete</a>
                         </div>
                     </td>
                 </tr>
