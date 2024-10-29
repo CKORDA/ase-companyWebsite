@@ -1,14 +1,14 @@
 <?php
+require_once '../CSVHelper.php'; // Include the CSVHelper class
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $role = $_POST['role'];
     $expertise = $_POST['expertise'];
     $description = $_POST['description'];
 
-    // Logic to append to team.csv
-    $file = fopen("team.csv", "a");
-    fputcsv($file, [$name, $role, $expertise, $description]);
-    fclose($file);
+    // Logic to append the new team member to team.csv
+    CSVHelper::writeCSV('team.csv', [$name, $role, $expertise, $description]);
 
     header("Location: index.php");
     exit();
