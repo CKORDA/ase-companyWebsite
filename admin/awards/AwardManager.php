@@ -12,10 +12,6 @@ class Award {
         $this->title = $title;
         $this->description = $description;
     }
-
-    public function toCSVArray() {
-        return [$this->id, $this->year, $this->title, $this->description];
-    }
 }
 
 class AwardManager {
@@ -25,14 +21,67 @@ class AwardManager {
         $this->filename = $filename;
     }
 
-    public function getMaxId() {
+    public function readAwards() {
+        $awards = [];
+        if (($handle = fopen($this->filename, 'r')) !== false) {
+            fgetcsv($handle); // Skip header row
+            while (($data = fgetcsv($handle)) !== false) {
+                $awards[] = new Award($data[0], $data[1], $data[2], $data[3]);
+            }
+            fclose($handle);
+        }
+        return $awards;
+    }
+
+    public function addAward($year, $title, $description) {
+        $newId = $this->getMaxId() + 1;
+        $newAward = [$newId, $year, $title, $description];
+
+        if (($handle = fopen($this->filename, 'a')) !== false) {
+            fputcsv($handle, $newAward);
+            fclose($handle);
+        }
+    }
+
+    public function deleteAward($idToDelete) {
+        $awards = $this->readAwards();
+        $updatedAwards = array_filter($awards, function($award) use ($idToDelete) {
+            return $award->id != $idToDelete;
+        });
+
+        $this->writeAwards($updatedAwards);
+    }
+
+    public function getAwardById($id) {
+        $awards = $this->readAwards();
+        foreach ($awards as $award) {
+            if ($award->id == $id) {
+                return $award;
+            }
+        }
+        return null;
+    }
+
+    public function updateAward($id, $year, $title, $description) {
+        $awards = $this->readAwards();
+        foreach ($awards as &$award) {
+            if ($award->id == $id) {
+                $award->year = $year;
+                $award->title = $title;
+                $award->description = $description;
+            }
+        }
+        $this->writeAwards($awards);
+    }
+
+    private function getMaxId() {
         $maxId = 0;
         if (($handle = fopen($this->filename, 'r')) !== false) {
-            fgetcsv($handle); // Skip the header row
+            fgetcsv($handle); // Skip header row
             while (($data = fgetcsv($handle)) !== false) {
-                $currentId = intval($data[0]); 
+                $currentId = intval($data[0]);
                 if ($currentId > $maxId) {
-                    $maxId = $currentId; 
+                    $maxId = $currentId;
                 }
             }
             fclose($handle);
@@ -40,29 +89,12 @@ class AwardManager {
         return $maxId;
     }
 
-    public function addAward(Award $award) {
-        if (($handle = fopen($this->filename, 'a')) !== false) {
-            fputcsv($handle, $award->toCSVArray());
-            fclose($handle);
-        }
-    }
-
-    public function deleteAward($idToDelete) {
-        $awards = [];
-        if (($handle = fopen($this->filename, 'r')) !== false) {
-            $header = fgetcsv($handle); 
-            $awards[] = $header; 
-            while (($data = fgetcsv($handle)) !== false) {
-                if ($data[0] != $idToDelete) { 
-                    $awards[] = $data; 
-                }
-            }
-            fclose($handle);
-        }
-
+    private function writeAwards($awards) {
         if (($handle = fopen($this->filename, 'w')) !== false) {
+            // Write header
+            fputcsv($handle, ['ID', 'Year', 'Title', 'Description']);
             foreach ($awards as $award) {
-                fputcsv($handle, $award); 
+                fputcsv($handle, [$award->id, $award->year, $award->title, $award->description]);
             }
             fclose($handle);
         }
