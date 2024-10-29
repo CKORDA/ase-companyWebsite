@@ -1,25 +1,15 @@
 <?php
-function getAwardById($filename, $id) {
-    if (($handle = fopen($filename, 'r')) !== false) {
-        fgetcsv($handle); 
-        while (($data = fgetcsv($handle)) !== false) {
-            if ($data[0] == $id) {
-                fclose($handle);
-                return [
-                    'id' => $data[0],
-                    'year' => $data[1],    
-                    'title' => $data[2],    
-                    'description' => $data[3]  
-                ];
-            }
-        }
-        fclose($handle);
-    }
-    return null;
-}
+require_once 'AwardManager.php'; // Include the class file
 
-$id = $_GET['id'];
-$award = getAwardById('data/awards.csv', $id);
+$filename = 'data/awards.csv';
+$awardManager = new AwardManager($filename);
+
+$id = $_GET['id'] ?? null; // Get the ID from the query parameter
+$award = null;
+
+if ($id) {
+    $award = $awardManager->getAwardById($id); // Fetch the award by ID
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -87,9 +77,9 @@ $award = getAwardById('data/awards.csv', $id);
 <body>
     <div class="container">
         <?php if ($award): ?>
-            <h1><?php echo htmlspecialchars($award['title']); ?></h1>
-            <p class="year"><strong>Year:</strong> <?php echo htmlspecialchars($award['year']); ?></p>
-            <p><?php echo nl2br(htmlspecialchars($award['description'])); ?></p>
+            <h1><?php echo htmlspecialchars($award->title); ?></h1>
+            <p class="year"><strong>Year:</strong> <?php echo htmlspecialchars($award->year); ?></p>
+            <p><?php echo nl2br(htmlspecialchars($award->description)); ?></p>
             <a href="index.php" class="btn-back">Back to List</a>
         <?php else: ?>
             <p class="not-found">Award not found!</p>
