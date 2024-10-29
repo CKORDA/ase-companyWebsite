@@ -1,23 +1,22 @@
 <?php 
-require_once 'AwardManager.php'; // Include the class file
+require_once 'AwardManager.php'; 
 
 $filename = 'data/awards.csv';
 $awardManager = new AwardManager($filename);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get a new ID for the award
+    
     $newId = $awardManager->getMaxId() + 1; 
     
-    // Create a new Award object
     $newAward = new Award($newId, $_POST['year'], $_POST['title'], $_POST['description']);
     
-    // Add the award to the CSV file
-    $awardManager->addAward($newAward);
+    $awardManager->addAward($newAward); 
     
-    // Redirect to the index page after adding
     header('Location: index.php'); 
     exit();
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

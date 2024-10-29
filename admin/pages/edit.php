@@ -1,8 +1,9 @@
 <?php
 include_once 'pages.php';
 
-$pageIndex = $_GET['index']; // Get the index from the URL
-$page = retrievePage($pageIndex);
+$pageManager = new PageManager(); 
+$pageIndex = $_GET['index']; 
+$page = $pageManager->retrievePage($pageIndex); 
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -15,8 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $applications = [];
     }
 
-    // Update the page using the pageIndex
-    if (updatePage($pageIndex, $name, $description, $applications)) {
+  // Update the page using the pageIndex
+    if ($pageManager->updatePage($pageIndex, $name, $description, $applications)) {
+
         header("Location: index.php");
         exit;
     } else {

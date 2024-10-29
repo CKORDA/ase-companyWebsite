@@ -33,15 +33,16 @@ class AwardManager {
         return $awards;
     }
 
-    public function addAward($year, $title, $description) {
-        $newId = $this->getMaxId() + 1;
-        $newAward = [$newId, $year, $title, $description];
+    public function addAward($award) {
+    $newId = $this->getMaxId() + 1; 
+    $newAward = [$newId, $award->year, $award->title, $award->description];
 
-        if (($handle = fopen($this->filename, 'a')) !== false) {
-            fputcsv($handle, $newAward);
-            fclose($handle);
-        }
+    if (($handle = fopen($this->filename, 'a')) !== false) {
+        fputcsv($handle, $newAward);
+        fclose($handle);
     }
+}
+
 
     public function deleteAward($idToDelete) {
         $awards = $this->readAwards();
@@ -74,10 +75,11 @@ class AwardManager {
         $this->writeAwards($awards);
     }
 
-    private function getMaxId() {
+    public function getMaxId() { 
         $maxId = 0;
         if (($handle = fopen($this->filename, 'r')) !== false) {
-            fgetcsv($handle); // Skip header row
+            fgetcsv($handle); 
+
             while (($data = fgetcsv($handle)) !== false) {
                 $currentId = intval($data[0]);
                 if ($currentId > $maxId) {
@@ -100,4 +102,5 @@ class AwardManager {
         }
     }
 }
+
 ?>
