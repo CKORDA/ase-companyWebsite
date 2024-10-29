@@ -1,37 +1,32 @@
 <?php
+require_once '../CSVHelper.php'; // Include the CSVHelper class
 
-
+// Function to get a specific team member by their ID
 function getTeamMember($id) {
-    $team = [];
-    if (($handle = fopen("team.csv", "r")) !== FALSE) {
-        fgetcsv($handle); // Skip the header
-        while (($data = fgetcsv($handle)) !== FALSE) {
-            $team[] = [
-                'Name' => $data[0],
-                'Role' => $data[1],
-                'Expertise' => $data[2],
-                'Description' => $data[3],
-            ];
-        }
-        fclose($handle);
-    }
-    return isset($team[$id]) ? $team[$id] : null;
+    $team = CSVHelper::readCSV('team.csv');
+    return isset($team[$id]) ? $team[$id] : null; // No +1 needed; access directly
 }
 
-$memberId = $_GET['id'];
+// Get the member ID from the query string and validate it
+$memberId = isset($_GET['id']) ? intval($_GET['id']) : null; // Use intval to sanitize input
 $member = getTeamMember($memberId);
+
+if (!$member) {
+    echo "Team member not found.";
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?php echo htmlspecialchars($member['Name']); ?> - Details</title>
+    <title><?php echo htmlspecialchars($member[0]); ?> - Details</title>
 </head>
 <body>
-    <h1><?php echo htmlspecialchars($member['Name']); ?></h1>
-    <p><strong>Role:</strong> <?php echo htmlspecialchars($member['Role']); ?></p>
-    <p><strong>Expertise:</strong> <?php echo htmlspecialchars($member['Expertise']); ?></p>
-    <p><strong>Description:</strong> <?php echo htmlspecialchars($member['Description']); ?></p>
+    <h1><?php echo htmlspecialchars($member[0]); ?></h1>
+    <p><strong>Role:</strong> <?php echo htmlspecialchars($member[1]); ?></p>
+    <p><strong>Expertise:</strong> <?php echo htmlspecialchars($member[2]); ?></p>
+    <p><strong>Description:</strong> <?php echo htmlspecialchars($member[3]); ?></p>
     <a href="edit.php?id=<?php echo $memberId; ?>">Edit</a>
     <a href="delete.php?id=<?php echo $memberId; ?>">Delete</a>
     <a href="index.php">Back to List</a>
