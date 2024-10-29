@@ -1,46 +1,24 @@
 <?php
+require_once '../CSVHelper.php'; // Include the CSVHelper class
 
-
-// Function to retrieve a specific team member by ID
+// Function to get a specific team member by ID
 function getTeamMember($id) {
-    $team = [];
-    if (($handle = fopen("team.csv", "r")) !== FALSE) {
-        fgetcsv($handle); // Skip the header
-        while (($data = fgetcsv($handle)) !== FALSE) {
-            $team[] = [
-                'Name' => $data[0],
-                'Role' => $data[1],
-                'Expertise' => $data[2],
-                'Description' => $data[3],
-            ];
-        }
-        fclose($handle);
-    }
-    return isset($team[$id]) ? $team[$id] : null;
+    $team = CSVHelper::readCSV('team.csv');
+    return isset($team[$id]) ? $team[$id] : null; // No more +1 offset
 }
 
-// Get the member ID from the URL
-$memberId = $_GET['id'];
+// Get the member ID from the URL and validate it
+$memberId = isset($_GET['id']) ? intval($_GET['id']) : null;
 $member = getTeamMember($memberId);
 
+if (!$member) {
+    echo "Team member not found.";
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Logic to remove from team.csv
-    $rows = [];
-    if (($handle = fopen("team.csv", "r")) !== FALSE) {
-        while (($data = fgetcsv($handle)) !== FALSE) {
-            $rows[] = $data;
-        }
-        fclose($handle);
-    }
-
-    unset($rows[$memberId + 1]); // +1 to account for header row
-    $rows = array_values($rows); // Reindex array
-
-    $file = fopen("team.csv", "w");
-    foreach ($rows as $row) {
-        fputcsv($file, $row);
-    }
-    fclose($file);
+    // Logic to remove the team member from team.csv
+    CSVHelper::deleteCSV('team.csv', $memberId); // Correctly pass the $memberId without offset
 
     header("Location: index.php");
     exit();
@@ -54,9 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h1>Delete Team Member</h1>
-    <p>Are you sure you want to delete <?php echo htmlspecialchars($member['Name']); ?>?</p>
+    <p>Are you sure you want to delete <?php echo htmlspecialchars($member[0]); ?>?</p>
     <form method="POST">
-        <input type="hidden" name="id" value="<?php echo $memberId; ?>">
         <input type="submit" value="Confirm Deletion">
     </form>
     <a href="index.php">Cancel</a>
