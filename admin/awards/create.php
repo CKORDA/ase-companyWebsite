@@ -1,36 +1,20 @@
-<?php
+<?php 
+require_once 'AwardManager.php'; // Include the class file
 
-function getMaxIdFromCSV($filename) {
-    $maxId = 0;
-    if (($handle = fopen($filename, 'r')) !== false) {
-        fgetcsv($handle); // Skip the header row
-        while (($data = fgetcsv($handle)) !== false) {
-            $currentId = intval($data[0]); 
-            if ($currentId > $maxId) {
-                $maxId = $currentId; 
-            }
-        }
-        fclose($handle);
-    }
-    return $maxId;
-}
-
-function addAwardToCSV($filename, $newAward) {
-    if (($handle = fopen($filename, 'a')) !== false) {
-        fputcsv($handle, $newAward);
-        fclose($handle);
-    }
-}
+$filename = 'data/awards.csv';
+$awardManager = new AwardManager($filename);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $newId = getMaxIdFromCSV('data/awards.csv') + 1; 
-    $newAward = [
-        $newId, 
-        $_POST['year'], 
-        $_POST['title'], 
-        $_POST['description'] 
-    ];
-    addAwardToCSV('data/awards.csv', $newAward);
+    // Get a new ID for the award
+    $newId = $awardManager->getMaxId() + 1; 
+    
+    // Create a new Award object
+    $newAward = new Award($newId, $_POST['year'], $_POST['title'], $_POST['description']);
+    
+    // Add the award to the CSV file
+    $awardManager->addAward($newAward);
+    
+    // Redirect to the index page after adding
     header('Location: index.php'); 
     exit();
 }
