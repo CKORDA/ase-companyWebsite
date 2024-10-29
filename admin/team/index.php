@@ -26,7 +26,7 @@ $teamMembers = getTeamMembers();
             <th>Actions</th>
         </tr>
         <?php foreach ($teamMembers as $key => $member): ?>
-            <?php if ($key === 0) continue; // Skip the header if present ?>
+            <?php if ($key == 0) continue; // Skip the header if present ?>
             <tr>
                 <td><?php echo htmlspecialchars($member[0]); ?></td>
                 <td><?php echo htmlspecialchars($member[1]); ?></td>
