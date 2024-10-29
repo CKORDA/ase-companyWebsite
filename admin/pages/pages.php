@@ -1,5 +1,4 @@
 <?php
-
 if (!function_exists('loadJSON')) {
     function loadJSON() {
         $filePath = __DIR__ . '/../../data/data.json';
@@ -10,27 +9,24 @@ if (!function_exists('loadJSON')) {
             return null; // Handle file not found
         }
     }
-}
 
-if (!function_exists('saveJSON')) {
-    function saveJSON($data) {
-        file_put_contents(__DIR__ . '/../../data/data.json', json_encode($data, JSON_PRETTY_PRINT));
+    private function loadJSON() {
+        if (file_exists($this->filePath)) {
+            return json_decode(file_get_contents($this->filePath), true);
+        } else {
+            error_log("File not found: " . $this->filePath);
+            return null;
+        }
     }
-}
 
-if (!function_exists('retrieveAllPages')) {
-    function retrieveAllPages() {
-        $data = loadJSON();
-        return $data['productsAndServices'];
+    private function saveJSON($data) {
+        file_put_contents($this->filePath, json_encode($data, JSON_PRETTY_PRINT));
     }
-}
 
-if (!function_exists('retrievePage')) {
-    function retrievePage($index) {
-        $data = loadJSON();
-        return isset($data['productsAndServices'][$index]) ? $data['productsAndServices'][$index] : null;
+    public function retrieveAllPages() {
+        $data = $this->loadJSON();
+        return $data['productsAndServices'] ?? [];
     }
-}
 
 if (!function_exists('createPage')) {
     function createPage($name, $description, $applications) {
@@ -71,13 +67,12 @@ function updatePage($index, $name, $description, $applications) {
         } else {
             error_log("Failed to write to JSON file: " . $filePath);
             return false; 
+
         }
     } else {
         error_log("Invalid index or data structure.");
         return false; 
     }
-}
-
 
 
 if (!function_exists('deletePage')) {
@@ -85,7 +80,11 @@ if (!function_exists('deletePage')) {
         $data = loadJSON();
         if (isset($data['productsAndServices'][$index])) {
             array_splice($data['productsAndServices'], $index, 1);
-            saveJSON($data);
+            $this->saveJSON($data);
+            return true;
+        } else {
+            error_log("Invalid index or data structure.");
+            return false;
         }
     }
 }

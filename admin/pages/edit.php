@@ -4,6 +4,7 @@ include_once 'pages.php';
 $pageIndex = $_GET['index']; // Get the index from the URL
 $page = retrievePage($pageIndex);
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $description = $_POST['description'];

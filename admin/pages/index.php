@@ -1,7 +1,8 @@
 <?php
 include_once 'pages.php';
 
-$pages = retrieveAllPages();
+$pageManager = new PageManager();
+$pages = $pageManager->retrieveAllPages();
 ?>
 <!DOCTYPE html>
 <html>
@@ -20,7 +21,7 @@ $pages = retrieveAllPages();
         <?php foreach ($pages as $index => $page): ?>
         <tr>
             <td><?php echo $index; ?></td>
-            <td><?php echo $page['name']; ?></td>
+            <td><?php echo htmlspecialchars($page['name']); ?></td>
             <td>
                 <a href="detail.php?index=<?php echo $index; ?>">View</a>
                 <a href="edit.php?index=<?php echo $index; ?>">Edit</a>

@@ -1,0 +1,34 @@
+{
+    "contacts": [
+        {
+            "id": "1",
+            "name": "Alice Johnson",
+            "email": "alice.johnson@example.com",
+            "message": "I am interested in your services. Please get back to me."
+        },
+        {
+            "id": "2",
+            "name": "Bob Smith",
+            "email": "bob.smith@example.com",
+            "message": "Can I get more information about your products?"
+        },
+        {
+            "id": "3",
+            "name": "Charlie Brown",
+            "email": "charlie.brown@example.com",
+            "message": "I would like to schedule a consultation."
+        },
+        {
+            "id": "4",
+            "name": "Diana Prince",
+            "email": "diana.prince@example.com",
+            "message": "Great website! I have a few questions."
+        },
+        {
+            "id": "5",
+            "name": "Ethan Hunt",
+            "email": "ethan.hunt@example.com",
+            "message": "I'm looking for partnership opportunities."
+        }
+    ]
+}
