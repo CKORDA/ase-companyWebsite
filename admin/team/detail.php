@@ -4,11 +4,11 @@ require_once '../CSVHelper.php'; // Include the CSVHelper class
 // Function to get a specific team member by their ID
 function getTeamMember($id) {
     $team = CSVHelper::readCSV('team.csv');
-    return isset($team[$id + 1]) ? $team[$id + 1] : null; // +1 to account for the header row
+    return isset($team[$id]) ? $team[$id] : null; // No +1 needed; access directly
 }
 
-// Get the member ID from the query string
-$memberId = $_GET['id'];
+// Get the member ID from the query string and validate it
+$memberId = isset($_GET['id']) ? intval($_GET['id']) : null; // Use intval to sanitize input
 $member = getTeamMember($memberId);
 
 if (!$member) {
