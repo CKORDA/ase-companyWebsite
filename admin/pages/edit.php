@@ -5,18 +5,20 @@ $pageManager = new PageManager();
 $pageIndex = $_GET['index']; 
 $page = $pageManager->retrievePage($pageIndex); 
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $description = $_POST['description'];
     $applications = json_decode($_POST['applications'], true);
 
-    
+    // Ensure applications is an array
     if (!is_array($applications)) {
         $applications = [];
     }
 
-
+  // Update the page using the pageIndex
     if ($pageManager->updatePage($pageIndex, $name, $description, $applications)) {
+
         header("Location: index.php");
         exit;
     } else {

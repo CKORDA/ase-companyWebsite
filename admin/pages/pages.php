@@ -4,6 +4,7 @@ class PageManager {
 
     public function __construct() {
         $this->filePath = __DIR__ . '/../../data/data.json'; 
+
     }
 
     private function loadJSON() {
@@ -33,13 +34,12 @@ class PageManager {
         
         $data = $this->loadJSON();
 
-       
+      
         $newPage = [
             'name' => $name,
             'description' => $description,
             'applications' => $applications
         ];
-
         
         $data['productsAndServices'][] = $newPage;
 
@@ -73,4 +73,5 @@ class PageManager {
         }
     }
 }
+
 ?>

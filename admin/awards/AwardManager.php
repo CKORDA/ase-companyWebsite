@@ -79,6 +79,7 @@ class AwardManager {
         $maxId = 0;
         if (($handle = fopen($this->filename, 'r')) !== false) {
             fgetcsv($handle); 
+
             while (($data = fgetcsv($handle)) !== false) {
                 $currentId = intval($data[0]);
                 if ($currentId > $maxId) {
