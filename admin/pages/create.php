@@ -1,6 +1,8 @@
 <?php
 include_once 'pages.php';
 
+$pageManager = new PageManager();
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $description = $_POST['description'];
@@ -12,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Create new page
-    $result = createPage($name, $description, $applications);
+    $result = $pageManager->createPage($name, $description, $applications);
     
     if ($result) {
         header("Location: index.php");
